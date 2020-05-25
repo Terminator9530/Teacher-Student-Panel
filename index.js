@@ -5,7 +5,7 @@ const session = require('express-session')
 
 const app=express();
 
-mongoose.connect("mongodb://localhost:27017/courses", {
+mongoose.connect("mongodb+srv://terminator:testdb@accounts-0uu7d.mongodb.net/Users", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
