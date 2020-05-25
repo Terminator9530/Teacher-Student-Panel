@@ -16,7 +16,6 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 6000000 }}))
 const teacherDetails = new mongoose.Schema({
     username:String,
     password:String,
-    count:Number,
     courses:Array
 });
 
@@ -86,8 +85,12 @@ app.post("/student/register",function(req,res){
 });
 
 app.get("/teacher-panel",function(req,res){
-    if(req.session.uid)
-    res.render("teacher-courses");
+    if(req.session.uid){
+        teacher.findOne({_id:req.session.uid},function(err,data){
+            console.log(data.courses,data);
+            res.render("teacher-courses",{data:data.courses});
+        });
+    }
     else
     res.redirect('/');
 });
@@ -95,7 +98,6 @@ app.get("/teacher-panel",function(req,res){
 app.post("/teacher/login",function(req,res){
     teacher.findOne(req.body,function(err,teacher){
         if(!err){
-            console.log(teacher);
             if(teacher){
                 req.session.uid=teacher.id;
                 req.session.type="teacher";
@@ -144,17 +146,20 @@ app.post("/student/login",function(req,res){
 });
 
 app.post("/addcourse",function(req,res){
-    teacher.updateOne({_id:req.session.uid},{ $push: { courses: req.body } },function(err,data){
-        if(!err)
-        console.log(data);
-        else
-        console.log(err);
-    });
     var data=req.body;
     data['teacher']=req.session.uid;
     allcourses.create(data,function(err,data){
-        if(!err)
-        console.log(data);
+        if(!err){
+            var newData=req.body;
+            newData.id=data._id;
+            teacher.updateOne({_id:req.session.uid},{ $push: { courses: {course:newData,count:0} } },function(err,data){
+                if(!err)
+                console.log(data);
+                else
+                console.log(err);
+            });
+            console.log(data);
+        }
         else
         console.log(err);
     });
@@ -167,17 +172,30 @@ app.post("/join/:id",function(req,res){
    findOne({_id:req.params.id}).
    populate('teacher').
    exec(function (err, course) {
-       teacher.updateOne({_id:course.teacher._id},{$inc : {'count' : 1}},function(err,data){
-           if(!err)
-           student.updateOne({_id:req.session.uid},{ $push: { courses: req.params.id} },function(err,data){
-                if(!err){
-                    res.redirect("/student-panel");
-                }
+       var allData=course._id;
+       course.teacher.courses.forEach(ele=>{
+           console.log(allData,ele.course.id,allData.equals(ele.course.id));
+           if(allData.equals(ele.course.id)){
+            ele.count+=1;
+            teacher.updateOne({_id:course.teacher._id},{$set : {courses : course.teacher.courses}},function(err,data){
+                if(!err)
+                student.updateOne({_id:req.session.uid},{ $push: { courses: req.params.id} },function(err,data){
+                     if(!err){
+                         res.redirect("/student-panel");
+                     }
+                 });
+                else
+                console.log(err);
             });
-           else
-           console.log(err);
+           }
        });
    });
+});
+
+app.post('/log-out', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
 });
 
 app.listen(3000,function(){

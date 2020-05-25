@@ -22,6 +22,17 @@
   </head>
   <body>
     <h1>Teacher Panel</h1>
+    <div class="row">
+        <% data.forEach(function(course){ %>
+            <div class="card col-4" style="width: 18rem;">
+                <div class="card-body">
+                  <h5 class="card-title"><%= course.course['course-name'] %></h5>
+                  <p class="card-text"><%= course.course['course-description'] %></p>
+                  <p><%= course.count %></p>
+                </div>
+            </div>
+        <% }); %>
+    </div>
     <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -46,6 +57,9 @@
             </div>
         </div>
     <button id="add" class="btn btn-primary">Add Course</button>
+    <form action="/log-out" method="POST">
+        <button type="submit" class="btn btn-primary">Log Out</button>
+    </form>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
