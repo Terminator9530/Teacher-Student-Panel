@@ -91,7 +91,7 @@ app.post("/student/register",function(req,res){
 });
 
 app.get("/teacher-panel",function(req,res){
-    if(req.session.uid){
+    if(req.session.uid&&req.session.type=="teacher"){
         teacher.findOne({_id:req.session.uid},function(err,data){
             console.log(data.courses,data);
             res.render("teacher-courses",{data:data.courses});
@@ -118,7 +118,7 @@ app.post("/teacher/login",function(req,res){
 });
 
 app.get("/student-panel",function(req,res){
-    if(req.session.uid){
+    if(req.session.uid&&req.session.type=="student"){
         allcourses.
         find({}).
         populate('teacher').
