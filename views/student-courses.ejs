@@ -25,6 +25,9 @@
     <form action="/log-out" method="POST" class="my-2 mr-2">
       <button type="submit" class="btn btn-primary">Log Out</button>
     </form>
+    <% if(data.length==0){ %>
+      <p>No Courses Enrolled</p>
+    <% } %>
     <div class="row">
         <% data.forEach(function(course){ %>
             <div class="card col-4" style="width: 18rem;">

@@ -160,7 +160,7 @@ app.post("/addcourse",function(req,res){
             newData.id=data._id;
             teacher.updateOne({_id:req.session.uid},{ $push: { courses: {course:newData,count:0} } },function(err,data){
                 if(!err)
-                console.log(data);
+                res.redirect("/teacher-panel");
                 else
                 console.log(err);
             });
@@ -169,7 +169,6 @@ app.post("/addcourse",function(req,res){
         else
         console.log(err);
     });
-    res.send("Done");
 });
 
 app.post("/join/:id",function(req,res){
