@@ -21,6 +21,9 @@
     <title>Login</title>
   </head>
   <body>
+    <div id="err">
+
+    </div>
     <div class="row">
         <div class="col-4">
           <div class="list-group" id="list-tab" role="tablist">
@@ -33,19 +36,19 @@
             <div class="tab-pane fade show active" id="list-teacher-register" role="tabpanel" aria-labelledby="list-teacher-register-list">
                 <h1>Register as Teacher</h1>
                 <!----------------------------------Teacher Register---------------------------------->
-                <form action="/teacher/register" method="POST">
-                    <input class="form-control" name="username" placeholder="Enter The Username">
-                    <input class="form-control" name="password" placeholder="Enter The Password">
-                    <input type="submit" class="btn btn-primary" value="Register">
+                <form>
+                    <input class="form-control" id="teacher-username" placeholder="Enter The Username">
+                    <input class="form-control" id="teacher-password" placeholder="Enter The Password">
+                    <button class="btn btn-primary" id="register-teacher" type="button">Register</button>
                 </form>
             </div>
             <div class="tab-pane fade" id="list-student-register" role="tabpanel" aria-labelledby="list-student-register-list">
                 <h1>Register as Student</h1>
                 <!----------------------------------Student Register---------------------------------->
-                <form action="/student/register" method="POST">
-                    <input class="form-control" name="username" placeholder="Enter The Username">
-                    <input class="form-control" name="password" placeholder="Enter The Password">
-                    <input type="submit" class="btn btn-primary" value="Register">
+                <form>
+                    <input class="form-control" name="student-username" placeholder="Enter The Username">
+                    <input class="form-control" name="student-password" placeholder="Enter The Password">
+                    <button class="btn btn-primary" id="register-student" type="button">Register</button>
                 </form>
             </div>
           </div>
@@ -60,5 +63,32 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script>
+      $("#register-teacher").click(function(){
+        $.post("/teacher/register",{username:document.getElementById("teacher-username").value,password:document.getElementById("teacher-password").value},function(data){
+          console.log(data);
+          document.getElementById("err").innerHTML=`
+          <div class="alert alert-${data.type?"success":"danger"} alert-dismissible fade show" role="alert">
+            ${data.message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          `;
+        });
+      });
+      $("#register-student").click(function(){
+        $.post("/student/register",{username:document.getElementById("student-username").value,password:document.getElementById("student-password").value},function(data){
+          document.getElementById("err").innerHTML=`
+          <div class="alert alert-${data.type?"success":"danger"} alert-dismissible fade show" role="alert">
+            ${data.message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          `;
+        });
+      });
+    </script>
   </body>
 </html>

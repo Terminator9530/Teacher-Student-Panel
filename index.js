@@ -65,23 +65,29 @@ app.get('/register',function(req,res){
 });
 
 app.post("/teacher/register",function(req,res){
-    teacher.create(req.body,function(err,teacher){
-        if(!err)
-        console.log(teacher);
-        else
-        console.log(err);
+    teacher.findOne({username:req.body.username},function(err,user){
+        if(user){
+            res.send({type:false,message:"Already Exist"});
+        } else {
+            teacher.create(req.body,function(err,teacher){
+                if(!err)
+                res.send({type:true,message:"Resgistered Successfully"});
+            });
+        }
     });
-    res.send("Done");
 });
 
 app.post("/student/register",function(req,res){
-    student.create(req.body,function(err,student){
-        if(!err)
-        console.log(student);
-        else
-        console.log(err);
+   student.findOne({username:req.body.username},function(err,user){
+        if(user){
+            res.send({type:false,message:"Already Exist"});
+        } else {
+           student.create(req.body,function(err,student){
+                if(!err)
+                res.send({type:true,message:"Resgistered Successfully"});
+            });
+        }
     });
-    res.send("Done");
 });
 
 app.get("/teacher-panel",function(req,res){
@@ -101,10 +107,10 @@ app.post("/teacher/login",function(req,res){
             if(teacher){
                 req.session.uid=teacher.id;
                 req.session.type="teacher";
-                res.redirect('/teacher-panel');
+                res.send({type:true});
             }
             else
-            res.send("Please Register");
+            res.send({type:false,message:"Invalid Credentials"});
         }
         else
         console.log(err);
@@ -135,10 +141,10 @@ app.post("/student/login",function(req,res){
             if(student){
                 req.session.uid=student.id;
                 req.session.type="student";
-                res.redirect('/student-panel');
+                res.send({type:true});
             }
             else
-            res.send("Please Register");
+            res.send({type:false,message:"Invalid Credentials"});
         }
         else
         console.log(err);

@@ -21,6 +21,9 @@
     <title>Login</title>
   </head>
   <body>
+    <div id="err">
+
+    </div>
     <div class="row">
         <div class="col-4">
           <div class="list-group" id="list-tab" role="tablist">
@@ -33,19 +36,19 @@
             <div class="tab-pane fade show active" id="list-teacher-login" role="tabpanel" aria-labelledby="list-teacher-login-list">
                 <h1>Login as Teacher</h1>
                 <!----------------------------------Teacher Login---------------------------------->
-                <form action="/teacher/login" method="POST">
-                    <input class="form-control" name="username" placeholder="Enter The Username">
-                    <input class="form-control" name="password" placeholder="Enter The Password">
-                    <input type="submit" class="btn btn-primary" value="Login">
+                <form>
+                    <input class="form-control" id="teacher-username" placeholder="Enter The Username">
+                    <input class="form-control" id="teacher-password" placeholder="Enter The Password">
+                    <button class="btn btn-primary" type="button" id="login-teacher">Login</button>
                 </form>
             </div>
             <div class="tab-pane fade" id="list-student-login" role="tabpanel" aria-labelledby="list-student-login-list">
                 <h1>Login as Student</h1>
                 <!----------------------------------Student Login---------------------------------->
-                <form action="/student/login" method="POST">
-                    <input class="form-control" name="username" placeholder="Enter The Username">
-                    <input class="form-control" name="password" placeholder="Enter The Password">
-                    <input type="submit" class="btn btn-primary" value="Login">
+                <form>
+                    <input class="form-control" id="student-username" placeholder="Enter The Username">
+                    <input class="form-control" id="student-password" placeholder="Enter The Password">
+                    <button class="btn btn-primary" type="button" id="login-student">Login</button>
                 </form>
             </div>
           </div>
@@ -61,7 +64,40 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <script>
-        
+        $("#login-teacher").click(function(){
+        $.post("/teacher/login",{username:document.getElementById("teacher-username").value,password:document.getElementById("teacher-password").value},function(data){
+          console.log(data);
+          if(data.type){
+            window.location.replace("/teacher-panel");
+          }else{
+            document.getElementById("err").innerHTML=`
+          <div class="alert alert-${data.type?"success":"danger"} alert-dismissible fade show" role="alert">
+            ${data.message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          `;
+          }
+          
+        });
+      });
+      $("#login-student").click(function(){
+        $.post("/student/login",{username:document.getElementById("student-username").value,password:document.getElementById("student-password").value},function(data){
+          if(data.type){
+            window.location.replace("/student-panel");
+          }else{
+            document.getElementById("err").innerHTML=`
+          <div class="alert alert-${data.type?"success":"danger"} alert-dismissible fade show" role="alert">
+            ${data.message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          `;
+          }
+        });
+      });
     </script>
   </body>
 </html>
